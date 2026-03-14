@@ -31,10 +31,37 @@ app.get("/posts", async (req, res) => {
   }
 });
 
+app.post("/posts", async (req, res) => {
+  try {
+    const { content, user_id } = req.body;
+
+    const { data, error } = await supabase
+      .from("posts")
+      .insert([{ content, user_id }])
+      .select();
+
+    if (error) throw error;
+
+    res.status(201).json(data);
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({
+      error: "Failed to create post"
+    });
+  }
+});
+
+
+
+
+
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () =>
   console.log(`Server running on port ${PORT}`)
 );
+
+
 
 
