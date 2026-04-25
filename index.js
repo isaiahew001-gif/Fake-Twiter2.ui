@@ -16,20 +16,28 @@ app.get("/", (req, res) => {
   res.send("Hello World!");
 });
 
-app.get("/posts", async (req, res) => {
+app.get('/posts', async (req, res) => {
   try {
-    const { data, error } = await supabase
+      const { data, error } = await supabase
       .from("posts")
-      .select("id, content, user_id, created_at");
+      .select(`
+        id,
+        content,
+        user_id,
+        created_at,
+        likes(count)
+      `);
 
-    if (error) throw error;
+      if (error) throw error;
 
-    res.json(data);
+      res.json(data);
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "Failed to fetch posts" });
+      console.error(err);
+      res.status(500).json({ error: "Failed to fetch posts" });
   }
-});
+})
+
+
 
 app.post("/like", async (req, res) => {
   try {
@@ -175,3 +183,5 @@ const PORT = process.env.PORT || 5000;
 app.listen(PORT, () =>
   console.log(`Server running on port ${PORT}`)
 );
+
+
