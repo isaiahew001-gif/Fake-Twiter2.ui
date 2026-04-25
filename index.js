@@ -31,6 +31,43 @@ app.get("/posts", async (req, res) => {
   }
 });
 
+app.post("/like", async (req, res) => {
+  try {
+      const { post_id, user_id } = req.body;
+
+      const { data, error } = await supabase
+          .from("likes")
+          .insert([{ post_id, user_id }])
+          .select();
+
+      if (error) throw error;
+
+      res.status(201).json(data);
+  } catch (err) {
+      console.error(err);
+      res.status(500).json({ error: "Failed to like post" });
+  }
+});
+
+app.post("/comment", async (req, res) => {
+  try {
+      const { post_id, user_id, content } = req.body;
+
+      const { data, error } = await supabase
+          .from("comments")
+          .insert([{ post_id, user_id, content }])
+          .select();
+
+      if (error) throw error;
+
+      res.status(201).json(data);
+  } catch (err) {
+      console.error(err);
+      res.status(500).json({ error: "Failed to add comment" });
+  }
+});
+
+
 app.post("/posts", async (req, res) => {
   try {
     const { content, user_id } = req.body;
@@ -138,5 +175,3 @@ const PORT = process.env.PORT || 5000;
 app.listen(PORT, () =>
   console.log(`Server running on port ${PORT}`)
 );
-
-
